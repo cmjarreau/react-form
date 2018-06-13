@@ -1,0 +1,159 @@
+function PostButton(props) {
+  var style = {
+    width: 25,
+    height: 25
+  }
+  return (
+    <button style={style}>{props.label}</button>
+  )
+}
+
+function PostText1(props) {
+  var style = {
+    border:"1px solid black",
+    padding: "0px 15px 0px 15px"
+  }
+  return (
+    <div style = {style}>{props.text}</div>
+  )
+}
+
+function PostText2(props) {
+  var style = {
+    border:"1px solid black",
+    padding: "0px 15px 0px 15px"
+  }
+  return (
+    <div style = {style}>{props.text}</div>
+  )
+}
+
+function Post(props) {
+  var style = {
+    display: "flex"
+  }
+  return (
+    <div style = {style}>
+      <PostButton label="X" handleClick = {props.removeItem}/>
+      <PostText1 text = {props.firstname}/>
+      <PostText2 text = {props.lastname}/>
+      <PostText2 text = {props.activity}/>
+      <PostText2 text = {props.option}/>
+    </div>
+  )
+}
+
+function PostList(props) {
+  return ( 
+    <ol>
+      {
+        props.postList.map((item, index) =>
+          <Post key = {index} 
+            firstname = {item.firstname}
+            lastname = {item.lastname}
+            activity = {item.activity}
+            option = {item.option}
+            removeItem = {() => props.removeItem(index)}
+          />
+        )
+      }
+    </ol>
+  )
+}
+
+class App extends React.Component{
+  constructor(props) {
+    super(props)
+    this.state = {firstNameValue:"", lastNameValue:"", activities: [], value: 'option1', items:[]}
+    this.handleChangeOption = this.handleChangeOption.bind(this);
+  }
+  handleChangeFirstName(event) {
+    this.setState({firstNameValue:event.target.value})
+    console.log(this.state.firstNameValue)
+  }
+  handleChangeLastName(event) {
+    this.setState({lastNameValue:event.target.value})
+    console.log(this.state.firstNameValue)
+  }
+  handleChangeCheckedBoxActivity1(event) {
+    this.setState({activity1:event.target.value})
+    console.log(this.state.activity1)
+  }
+    handleChangeCheckedBoxActivity2(event) {
+    this.setState({activity2:event.target.value})
+    console.log(this.state.activity2)
+  }
+  handleChangeCheckedBoxActivity3(event) {
+    this.setState({activity3:event.target.value})
+    console.log(this.state.activity3)
+  }
+  handleChangeOption(event) {
+    this.setState({value:event.target.value})
+    console.log(value)
+  }
+  addItem() {
+    var itemsCopy = this.state.items.slice();
+    var truncatedFirst = this.state.firstNameValue.substring(0,20);
+    var truncatedLast = this.state.lastNameValue.substring(0,20);
+    
+    var activitiesCopy = this.state.activities.slice();
+    var activity1 = this.state.activity1;
+    activitiesCopy.push(activity1);
+    var activity2 = this.state.activity2;
+    activitiesCopy.push(activity2);
+    var activity3 = this.state.activity3;
+    activitiesCopy.push(activity3);
+    
+    var option = this.state.value;
+    console.log(option);
+    
+    itemsCopy.push({"firstname":truncatedFirst, "lastname":truncatedLast, "activity":activitiesCopy, "option": option})
+    this.setState({items:itemsCopy, firstNameValue:"", lastNameValue:"", activity: "", option: ""})
+    console.log(itemsCopy);
+  }
+  removeItem(index) {
+    var itemsCopy = this.state.items.slice()
+    itemsCopy.splice(index,1);
+    this.setState({items:itemsCopy, firstNameValue:"", lastNameValue:"", activity: "", option: ""})
+  }
+  render() {
+    return (
+      <div>
+        <div>
+        <input firstNameValue = {this.state.firstNameValue} onChange = {this.handleChangeFirstName.bind(this)}/>
+        </div>
+        
+        <div>
+        <input lastNameValue = {this.state.lastNameValue} onChange = {this.handleChangeLastName.bind(this)}/>
+        </div>
+        
+        <div>
+          <input type="checkbox" value="a" onChange = {this.handleChangeCheckedBoxActivity1.bind(this)}/>Dietary Restrictions
+        </div>
+        <div>
+          <input type="checkbox" value="b" onChange = {this.handleChangeCheckedBoxActivity2.bind(this)}/>Physical Disabilities
+        </div>
+        <div>
+          <input type="checkbox" value="c" onChange = {this.handleChangeCheckedBoxActivity3.bind(this)}/>Medical Needs
+        </div>
+        
+        <select value={this.state.value} onChange={this.handleChangeOption}>
+          <option value="Science Lab">Science Lab</option>
+          <option value="Swimming">Swimming</option>
+          <option value="Cooking">Cooking</option>
+          <option value="Painting">Painting</option>
+        </select>
+        
+        <div>
+          <button onClick = { () => this.addItem()}>Submit</button>
+        </div>
+        <PostList postList = {this.state.items} removeItem = {this.removeItem.bind(this)}/>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(
+  <App/>,
+  document.getElementById("root")
+)
